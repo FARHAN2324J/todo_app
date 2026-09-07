@@ -3,6 +3,7 @@ import request from "supertest";
 
 import app from "../app.js";
 import { pool } from "../db/pool.js";
+import { updateTodo } from "../services/todo.service.js";
 
 beforeEach(async () => {
   await pool.query("DELETE FROM todos");
@@ -132,6 +133,11 @@ describe("PUT /todos/:id", () => {
       title: "Learn TDD",
       completed: false,
     });
+  });
+  it("should throw NotFoundError when todo does not exist in todo.service.ts", async () => {
+    await expect(updateTodo(999999, "Learn Backend", true)).rejects.toThrow(
+      "Todo not found",
+    );
   });
 });
 

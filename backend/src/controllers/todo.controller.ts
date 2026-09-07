@@ -6,6 +6,7 @@ import {
   updateTodo,
 } from "../services/todo.service.js";
 import { createTodoSchema, updateTodoSchema } from "../schemas/todo.schema.js";
+import { BadRequestError } from "../errors/bad-request.error.js";
 
 export async function getTodosHandler(_req: Request, res: Response) {
   const todos = await getTodos();
@@ -23,18 +24,10 @@ export async function updateTodoHandler(req: Request, res: Response) {
   const id = Number(req.params.id);
 
   if (Number.isNaN(id)) {
-    return res.status(400).json({
-      message: "Invalid todo id",
-    });
+    throw new BadRequestError("Invalid todo id");
   }
 
   const todo = await updateTodo(id, req.body.title, req.body.completed);
-
-  if (!todo) {
-    return res.status(404).json({
-      message: "Todo not found",
-    });
-  }
 
   return res.json(todo);
 }

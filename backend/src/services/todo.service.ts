@@ -1,4 +1,5 @@
 import { pool } from "../db/pool.js";
+import { NotFoundError } from "../errors/not-found.error.js";
 
 export async function getTodos() {
   const result = await pool.query(`
@@ -41,6 +42,10 @@ export async function updateTodo(
     [title, completed, id],
   );
 
+  if (!result.rows[0]) {
+    throw new NotFoundError("Todo not found");
+  }
+
   return result.rows[0];
 }
 
@@ -51,7 +56,7 @@ export async function deleteTodo(id: number) {
       WHERE id = $1
       RETURNING *
     `,
-    [id]
+    [id],
   );
 
   return result.rows[0];
