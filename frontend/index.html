@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+  <title>Todo App</title>
+
+  <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: Arial, sans-serif;
+      background: #f4f6f8;
+      color: #1f2937;
+      min-height: 100vh;
+      padding: 60px 20px;
+    }
+
+    .container {
+      width: 100%;
+      max-width: 600px;
+      margin: 0 auto;
+    }
+
+    h1 {
+      text-align: center;
+      margin-bottom: 30px;
+      font-size: 36px;
+    }
+
+    .todo-list {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    .todo-item {
+      background: white;
+      padding: 18px 20px;
+      border-radius: 12px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      box-shadow: 0 3px 10px rgba(0, 0, 0, 0.06);
+    }
+
+    .todo-title {
+      font-size: 17px;
+    }
+
+    .completed {
+      text-decoration: line-through;
+      color: #9ca3af;
+    }
+
+    .status {
+      font-size: 13px;
+      color: #6b7280;
+    }
+
+    .message {
+      text-align: center;
+      color: #9ca3af;
+      margin-top: 30px;
+    }
+  </style>
+</head>
+
+<body>
+  <main class="container">
+
+    <h1>My Todos</h1>
+
+    <section id="todo-list" class="todo-list">
+      <p class="message">Loading...</p>
+    </section>
+
+  </main>
+
+  <script>
+    async function loadTodos() {
+      const response = await fetch("http://localhost:3000/todos");
+
+      const todos = await response.json();
+
+      const todoList = document.getElementById("todo-list");
+
+      todoList.innerHTML = "";
+
+      if (todos.length === 0) {
+        todoList.innerHTML = `
+          <p class="message">No todos yet.</p>
+        `;
+
+        return;
+      }
+
+      todos.forEach((todo) => {
+        const todoElement = document.createElement("div");
+
+        todoElement.className = "todo-item";
+
+        todoElement.innerHTML = `
+          <span class="todo-title ${todo.completed ? "completed" : ""}">
+            ${todo.title}
+          </span>
+
+          <span class="status">
+            ${todo.completed ? "Completed" : "Pending"}
+          </span>
+        `;
+
+        todoList.appendChild(todoElement);
+      });
+    }
+
+    loadTodos();
+  </script>
+</body>
+</html>
